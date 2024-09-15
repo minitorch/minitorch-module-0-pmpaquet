@@ -214,21 +214,22 @@ def inv(x: float) -> float:
     return 1. / x
 
 
-def log_back(x: float) -> float:
-    """Returns the derivative of the log function of x: 1/x
+def log_back(x: float, y: float) -> float:
+    """Returns the derivative of the log function of times another argument
     
     Args:
-        x: float
+        x: take d/dx log 
+        y: argmuent to multiple to d/dx log
 
     Returns:
-        (float) the reciprocal of x
+        (float) the reciprocal of x times y
 
     """
-    return 1. / x
+    return y / x
 
 
-def inv_back(x: float) -> float:
-    """Returns the derivative of the inverse function of the input
+def inv_back(x: float, y: float) -> float:
+    """Returns the derivative of the inverse function of the input times another arg
     
     Args:
         x: float
@@ -237,21 +238,21 @@ def inv_back(x: float) -> float:
         (float) The derivative of the inverse function
 
     """
-    return -1. / (x * x)
+    return -y / (x * x)
 
 
-def relu_back(x: float) -> float:
-    """Returns the derivative of ReLU applied to the input
+def relu_back(x: float, y: float) -> float:
+    """Returns the derivative of ReLU of the first input times second argument
 
     Args:
         x: float
+        y: float
 
     Returns:
-        (float) derivative of ReLU on x
+        (float) derivative of ReLU on x times y
 
     """
-    return 1. if x >= 0. else 0.
-
+    return y if x >= 0. else 0.
 
 
 # ## Task 0.3
@@ -268,6 +269,7 @@ def relu_back(x: float) -> float:
 # - addLists : add two lists together
 # - sum: sum lists
 # - prod: take the product of lists
+
 
 
 # TODO: Implement for Task 0.3.

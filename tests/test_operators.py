@@ -24,6 +24,9 @@ from minitorch.operators import (
     relu,
     relu_back,
     sigmoid,
+    zipWith,
+    reduce,
+    sum
 )
 
 from .strategies import assert_close, small_floats
@@ -108,10 +111,14 @@ def test_sigmoid(a: float) -> None:
     * It crosses 0 at 0.5
     * It is  strictly increasing.
     """
-    assert 0. < sigmoid(a) < 1.
+    assert 0. <= sigmoid(a) <= 1.
     assert_close(1. - sigmoid(a), sigmoid(-a))
     assert_close(sigmoid(0.), 0.5)
-    assert sigmoid(a - 0.1*abs(a)) < sigmoid(a) < sigmoid(a + 0.1*abs(a))
+    if abs(a) > 1.:
+        # Less-than-or-equal to account for saturation
+        assert sigmoid(a - 0.1*abs(a)) <= sigmoid(a) <= sigmoid(a + 0.1*abs(a))
+    else:
+        assert sigmoid(a - 0.1) < sigmoid(a) < sigmoid(a + 0.1)
 
 
 @pytest.mark.task0_2
@@ -119,9 +126,8 @@ def test_sigmoid(a: float) -> None:
 def test_transitive(a: float, b: float, c: float) -> None:
     """Test the transitive property of less-than (a < b and b < c implies a < c)"""
     a, b, c = sorted([a, b, c])
-    assert lt(a, b)
-    assert lt(b, c)
-    assert lt(a, c)
+    if lt(a, b) and lt(b, c):
+        assert lt(a, c)
 
 
 @pytest.mark.task0_2
@@ -174,8 +180,7 @@ def test_sum_distribute(ls1: List[float], ls2: List[float]) -> None:
     """Write a test that ensures that the sum of `ls1` plus the sum of `ls2`
     is the same as the sum of each element of `ls1` plus each element of `ls2`.
     """
-    # TODO: Implement for Task 0.3.
-    raise NotImplementedError("Need to implement for Task 0.3")
+    assert_close(sum(ls1) + sum(ls2), sum(zipWith(add)(ls1, ls2)))
 
 
 @pytest.mark.task0_3

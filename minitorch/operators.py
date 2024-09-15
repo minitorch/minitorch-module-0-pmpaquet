@@ -1,9 +1,12 @@
 """Collection of the core mathematical operators used throughout the code base."""
 
+from ast import Call
 import math
 
 # ## Task 0.1
 from typing import Callable, Iterable
+
+from numpy import iterable
 
 #
 # Implementation of a prelude of elementary functions.
@@ -271,5 +274,100 @@ def relu_back(x: float, y: float) -> float:
 # - prod: take the product of lists
 
 
+def map(func: Callable) -> Callable:
+    """Higher-order function Applies a function to every element in an iteratable
+    
+    Args:
+        func: Callable to apply over the iterable
+        
+    Returns:
+        Iterable containing results of applying funtion to iterable
+    
+    """
+    return lambda it: [func(elm) for elm in it]
 
-# TODO: Implement for Task 0.3.
+
+def zipWith(func: Callable) -> Callable:
+    """Higher-order function that combines two iterables with a given function
+    
+    Args:
+        func: Callable to apply to elements of both iterables
+        
+    Returns:
+        Callable to compute [func(a,b) for a,b in zip(it_a, it_b)]
+        
+    """
+    return lambda iterA, iterB : [func(a, b) for a,b in zip(iterA, iterB)]
+
+
+def reduce(func: Callable) -> Callable:
+    """Higher-order function that uses a given funtion to reduce an iterable
+    to a single element.
+    
+    Args:
+        func (Callable): function that reduces all elements in the iterable
+    
+    Returns:
+        Callable that applies the funciton to reduce an iterable to a single
+        element
+        
+    """
+    def _reducer(iter: Iterable) -> float:
+        ans: float = 0.
+        for i,val in enumerate(iter):
+            ans = func(ans, val) if i else val
+        return ans
+    return _reducer
+
+
+def negList(data: Iterable) -> Iterable:
+    """Negate all elements in a list
+    
+    Args:
+        data (Iterable): list of elements to negate
+        
+    Returns:
+        (Iterable) list of negated elements from data
+        
+    """
+    return map(neg)(data)
+
+
+def addLists(iterA: Iterable, iterB: Iterable) -> Iterable:
+    """Creates a list of element-wise additions from input iterables
+    
+    Args:
+        iterA (Iterable): List of elements to add with iterB
+        iterB (Iterable): List of elements to add with iterA
+        
+    Returns:
+        (Iterable) list of element-wise sums of iterA and iterB
+        
+    """
+    return zipWith(add)(iterA, iterB)
+
+
+def sum(iter: Iterable) -> float:
+    """Sums all elements in input iterable
+    
+    Args:
+        iter (Iterable): data to sum
+        
+    Returns:
+        (float) sum of all elements in input iterable
+        
+    """
+    return reduce(add)(iter)
+
+
+def prod(iter: Iterable) -> float:
+    """Computes product of all elements in input iterable
+    
+    Args:
+        iter (Iterable): data to multiply
+        
+    Returns:
+        (float) product of all elements in input iterable
+        
+    """
+    return reduce(mul)(iter)

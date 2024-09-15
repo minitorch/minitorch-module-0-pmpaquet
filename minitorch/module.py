@@ -39,7 +39,7 @@ class Module:
         """Set the mode of this module and all descendent modules to `eval`."""
         self.training = False
         for module in self._modules.values():
-            module.train()
+            module.eval()
 
     def named_parameters(self) -> Sequence[Tuple[str, Parameter]]:
         """Collect all the parameters of this module and its descendents.
@@ -50,8 +50,8 @@ class Module:
 
         """
         named_params = [(n,p) for n,p in self._parameters.items()]
-        for mod in self._modules.values():
-            named_params += mod.named_parameters()
+        for name,mod in self._modules.items():
+            named_params += [(f'{name}.{n}', p) for n,p in mod.named_parameters()]
         return named_params
 
     def parameters(self) -> Sequence[Parameter]:
